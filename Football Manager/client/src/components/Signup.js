@@ -3,12 +3,12 @@ import Axios from 'axios'
 
 export function Signup() {
     // Create a state for each variable
-    const [teamName, setTeamName] = useState("");
+    const [team_name, setteam_name] = useState("");
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
     const addTeam = () => {
     Axios.post('http://localhost:3001/create', {
-          teamName: teamName, 
+          team_name: team_name, 
           password: password, 
           email: email,}).then(()=> {
             console.log("SUCCESS");
@@ -19,7 +19,7 @@ export function Signup() {
         <div className="App">
           <label>Team Name : </label>
           <input type="text" onChange={(event) => {
-            setTeamName(event.target.value);
+            setteam_name(event.target.value);
           }}/>
           <label>Password : </label>
           <input type="password" onChange={(event) => {
@@ -29,7 +29,7 @@ export function Signup() {
           <input type="text" onChange={(event) => {
             setEmail(event.target.value);
           }}/>
-          <button onClick={addTeam}>Add Employee</button>
+          <button onClick={addTeam}>Signup</button>
         </div>
       );
 }
