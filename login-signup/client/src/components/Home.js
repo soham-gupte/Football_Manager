@@ -1,9 +1,10 @@
-// import { useState } from "react";
+// import { useState } from "react";4
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom"
 
 export function Home() {
     return (
         <div className="signup-btn">
-            <button>Signup</button>
+            <Link to="/signup"><button >Signup</button></Link>
         </div>
     )
 }
