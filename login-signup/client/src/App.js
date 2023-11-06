@@ -9,7 +9,6 @@ function App() {
   // <Signup/>
   return (
     <div className="App">
-
       <Router>
         <Routes>
 
