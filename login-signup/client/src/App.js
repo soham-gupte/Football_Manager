@@ -1,52 +1,31 @@
 import './App.css';
-import { useState } from "react";
-import Axios from 'axios'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Signup } from './components/Signup';
+import { Home } from './components/Home';
+// import Axios from 'axios'
 
 function App() {
-
-  // Create a state for each variable
-  const [name, setName] = useState("");
-  const [age, setAge] = useState(0);
-  const [country, setCountry] = useState("");
-  const [position, setPosition] = useState("");
-  const [wage, setWage] = useState(0);
-
-  const addEmployee = () => {
-    Axios.post('http://localhost:3001/create', {
-      name: name, 
-      age: age, 
-      country: country, 
-      position: position, 
-      wage: wage,}).then(()=> {
-        console.log("SUCCESS");
-      })
-  }
-
+  
+  // <Signup/>
   return (
     <div className="App">
-      <label>Name : </label>
-      <input type="text" onChange={(event) => {
-        setName(event.target.value);
-      }}/>
-      <label>Age : </label>
-      <input type="number" onChange={(event) => {
-        setAge(event.target.value);
-      }}/>
-      <label>Country : </label>
-      <input type="text" onChange={(event) => {
-        setCountry(event.target.value);
-      }}/>
-      <label>Position : </label>
-      <input type="text" onChange={(event) => {
-        setPosition(event.target.value);
-      }}/>
-      <label>Wage : </label>
-      <input type="number" onChange={(event) => {
-        setWage(event.target.value);
-      }}/>
-      <button onClick={addEmployee}>Add Employee</button>
+
+      <Router>
+        <Routes>
+
+          <Route path="/" element={
+            <Home/>
+          } />
+
+          <Route path="/signup" element={
+            <Signup/>
+          } />
+
+        </Routes>
+      </Router>
     </div>
   );
+  
 }
 
 export default App;
