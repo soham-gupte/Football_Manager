@@ -40,16 +40,21 @@ app.post('/login', (req, res) => {
         } else {
             if (rows.length > 0) {
                 const storedPassword = rows[0].password;
-                if (password === storedPassword) {
-                    // Passwords match, you can consider it a successful login
-                    res.send({data:"Login Successful"});
-                } else {
-                    // Passwords do not match
-                    res.status(401).send({data:"Invalid Password"});
+                const storedTeamName = rows[0].team_name;
+                if (team_name != storedTeamName) {
+                    res.send({data:"No user found"});
                 }
-            } else {
-                // No user found with the given team_name
-                res.status(404).send("User not found");
+                else if (team_name === storedTeamName) {
+                    if (password === storedPassword) {
+                        // Passwords match, you can consider it a successful login
+                        res.send({data:"Login Successful"});
+                    } else {
+                        // Passwords do not match
+                        res.status(401).send({data:"Invalid Password"});
+                    }
+                } else {
+                    res.status(404).send({data:"User not found"});
+                }
             }
         }
     });
