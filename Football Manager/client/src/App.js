@@ -14,13 +14,16 @@ function App() {
         <Routes>
 
           <Route path="/" element={
-            // <Home/>
             <Main/>
           } />
 
           <Route path="/signup" element={
             <Signup/>
           } />
+
+          <Route path="/trading" element={
+            <Home/>
+          }/>
 
         </Routes>
       </Router>

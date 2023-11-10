@@ -5,10 +5,32 @@
     background-color: black;
 }
 
+.main-menu-contents {
+    position: fixed;
+    left: 0;
+    width: 17.5%;
+}
+
 .main-menu {
-    background-color: grey;
-    padding: 10px;
-    /* text-align: center; */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    background-color: rgb(99, 96, 91);
+}
+
+.main-menu a {
+    text-decoration: none; /* Remove underline from links */
+}
+
+.all-players {
+    background-color: rgb(35, 37, 130);
+}
+
+.main-menu button {
+    width: 80%;
+    padding: 10px; /* Adjust padding as needed */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    margin-bottom: 10px; /* Adjust margin as needed */
 }
 
 .player-content {
