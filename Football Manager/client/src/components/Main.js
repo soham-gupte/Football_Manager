@@ -1,6 +1,7 @@
 import React from 'react';
 import "../styles/MainStyles.css"
 // import {player_icon} from "../images/player-icon.png"
+import { Menu } from './Menu';
 
 
 function PlayerCard(props) {
@@ -18,15 +19,7 @@ function PlayerCard(props) {
 export function Main() {
     return (
         <div className="main">
-            <div className="main-menu">
-                <div className='main-menu-contents'>
-                    <h1>{team_name}</h1>
-                    <a href='/marketplace'><button>Marketplace</button></a>
-                    <a href='/trading'><button>Trading</button></a>
-                    <a href='/notifications'><button>Notifications</button></a>
-                    <a href='/transactions'><button>Transactions</button></a>
-                </div>
-            </div>
+            <Menu/>
             <div className="all-players">
                 <h1>Playing 11</h1>
                 <div className="player-content">

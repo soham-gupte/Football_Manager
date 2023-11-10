@@ -3,10 +3,11 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Signup } from './components/Signup';
 import { Home } from './components/Home';
 import { Main } from './components/Main';
+import { Trading } from './components/Trading';
 // import Axios from 'axios'
 
 function App() {
-  
+
   // <Signup/>
   return (
     <div className="App">
@@ -14,22 +15,22 @@ function App() {
         <Routes>
 
           <Route path="/" element={
-            <Main/>
+            <Main />
           } />
 
           <Route path="/signup" element={
-            <Signup/>
+            <Signup />
           } />
 
           <Route path="/trading" element={
-            <Home/>
-          }/>
+            <Trading />
+          } />
 
         </Routes>
       </Router>
     </div>
   );
-  
+
 }
 
 export default App;
