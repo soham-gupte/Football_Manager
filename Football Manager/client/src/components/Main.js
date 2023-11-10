@@ -1,6 +1,7 @@
 import React from 'react';
 import "../styles/MainStyles.css"
 import { useEffect, useState } from 'react';
+import { Menu } from './Menu';
 // import {player_icon} from "../images/player-icon.png"
 
 
@@ -17,29 +18,9 @@ function PlayerCard(props) {
 }
 
 export function Main() {
-    const [team_name, setTeamName] = useState('');
-
-    useEffect(() => {
-        // Retrieve username from localStorage
-        const storedTeamName = localStorage.getItem('team_name');
-
-        // Update state with the retrieved username
-        if (storedTeamName) {
-            setTeamName(storedTeamName);
-        }
-    }, []);
-
     return (
         <div className="main">
-            <div className="main-menu">
-                <div className='main-menu-contents'>
-                    <h1>{team_name}</h1>
-                    <a href='/marketplace'><button>Marketplace</button></a>
-                    <a href='/trading'><button>Trading</button></a>
-                    <a href='/notifications'><button>Notifications</button></a>
-                    <a href='/transactions'><button>Transactions</button></a>
-                </div>
-            </div>
+            <Menu />
             <div className="all-players">
                 <h1>Playing 11</h1>
                 <div className="player-content">

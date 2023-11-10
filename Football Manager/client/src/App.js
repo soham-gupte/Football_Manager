@@ -5,6 +5,8 @@ import { Home } from './components/Home';
 import { Login } from './components/Login';
 import { Main } from './components/Main';
 import { Marketplace } from './components/Marketplace';
+import { Menu } from './components/Menu';
+import { Trading } from './components/Trading';
 // import Axios from 'axios'
 
 function App() {
@@ -33,6 +35,10 @@ function App() {
 
           <Route path="/marketplace" element={
             <Marketplace/>
+          } />
+
+          <Route path="/trading" element={
+            <Trading/>
           } />
 
         </Routes>
