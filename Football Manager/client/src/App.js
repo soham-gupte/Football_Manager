@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Signup } from './components/Signup';
 import { Home } from './components/Home';
 import { Login } from './components/Login';
-import { Dashboard } from './components/main';
+import { Main } from './components/Main';
+import { Marketplace } from './components/Marketplace';
 // import Axios from 'axios'
 
 function App() {
@@ -26,8 +27,12 @@ function App() {
             <Login/>
           } />
 
-          <Route path="/dashboard" element={
-            <Dashboard/>
+          <Route path="/main" element={
+            <Main/>
+          } />
+
+          <Route path="/marketplace" element={
+            <Marketplace/>
           } />
 
         </Routes>

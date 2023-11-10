@@ -7,12 +7,19 @@ export function Signup() {
     const [team_name, setteam_name] = useState("");
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
+    const postteamname = () => {
+      Axios.post('http://localhost:3001/main', {
+          team_name: team_name,}).then(()=> {
+            console.log("GOING TO MAIN PAGE");
+          })
+    };
     const addTeam = () => {
     Axios.post('http://localhost:3001/create', {
           team_name: team_name, 
           password: password, 
           email: email,}).then(()=> {
             console.log("SUCCESS");
+            postteamname();
           })
       }
     

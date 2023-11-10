@@ -8,8 +8,8 @@ app.use(express.json());
 
 const db = mysql.createConnection({
     user: 'root', 
-    host: 'localhost',
-    password: 'Vadi@2606',
+    host: 'football.cn9livtjfzqg.ap-south-1.rds.amazonaws.com',
+    password: 'password',
     database: 'FootballDB'
 });
 
@@ -45,7 +45,7 @@ app.post('/login', (req, res) => {
                     res.send({data:"Login Successful"});
                 } else {
                     // Passwords do not match
-                    res.status(401).send("Invalid Password");
+                    res.status(401).send({data:"Invalid Password"});
                 }
             } else {
                 // No user found with the given team_name
@@ -55,10 +55,15 @@ app.post('/login', (req, res) => {
     });
 });
 
-app.post('/main', (req, res) => {
+app.post(`/main`, (req, res) => {
+    const team_name = req.params.team_name;
+    res.send({ team_name: team_name });
+});
+
+app.post('/marketplace', (req, res) => {
     const team_name = req.body.team_name;
 
-
+    
 });
 
 app.listen(3001, () => {
