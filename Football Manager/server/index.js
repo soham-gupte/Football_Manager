@@ -8,8 +8,8 @@ app.use(express.json());
 
 const db = mysql.createConnection({
     user: 'root', 
-    host: 'localhost',
-    password: 'Vadi@2606',
+    host: 'football.cn9livtjfzqg.ap-south-1.rds.amazonaws.com',
+    password: 'password',
     database: 'FootballDB'
 });
 
