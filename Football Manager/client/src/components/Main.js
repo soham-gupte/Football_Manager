@@ -1,7 +1,8 @@
 import React from 'react';
 import "../styles/MainStyles.css"
-// import {player_icon} from "../images/player-icon.png"
+import { useEffect, useState } from 'react';
 import { Menu } from './Menu';
+// import {player_icon} from "../images/player-icon.png"
 
 
 function PlayerCard(props) {
@@ -19,7 +20,7 @@ function PlayerCard(props) {
 export function Main() {
     return (
         <div className="main">
-            <Menu/>
+            <Menu />
             <div className="all-players">
                 <h1>Playing 11</h1>
                 <div className="player-content">
@@ -41,8 +42,6 @@ export function Main() {
         </div>
     )
 }
-
-const team_name = "Soham";
 
 const playing11Array = [
     {

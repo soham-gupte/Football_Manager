@@ -1,6 +1,17 @@
-const team_name = "Soham";
+import { useState, useEffect } from "react";
 
 export function Menu() {
+    const [team_name, setTeamName] = useState('');
+
+    useEffect(() => {
+        // Retrieve username from localStorage
+        const storedTeamName = localStorage.getItem('team_name');
+
+        // Update state with the retrieved username
+        if (storedTeamName) {
+            setTeamName(storedTeamName);
+        }
+    }, []);
     return (
         <div className="main-menu">
             <div className='main-menu-contents'>
