@@ -34,7 +34,7 @@ function App() {
           } />
 
           <Route path="/marketplace" element={
-            <Marketplace/>
+            <Marketplace itemsPerPage={20}/>
           } />
 
           <Route path="/trading" element={
