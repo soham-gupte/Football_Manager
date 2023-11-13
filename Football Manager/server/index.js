@@ -73,11 +73,18 @@ app.post(`/main`, (req, res) => {
 });
 
 app.post('/retreivemarketplace', (req, res) => {
-    const team_name = req.params.team_name;
+    const team_name = req.body.team_name;
+    const search_term = req.body.search_term;
+    let sql = 'SELECT player_name, position, nationality, value FROM Players WHERE player_id IN (SELECT player_id FROM Marketplace)';
+    const params = [];
+    if (search_term) {
+        sql += ' AND player_name LIKE ?';
+        params.push(`%${search_term}%`);
+    }
 
-    db.query('SELECT player_name, position, nationality, value FROM Players WHERE player_id IN (SELECT player_id FROM Marketplace)', (err, rows) => {
+    db.query(sql, params, (err, rows) => {
         if (err) {
-            console.log(err);
+            console.log(err);   
             res.status(500).send("Internal Server Error");
         } else {
             if (rows.length > 0) {
