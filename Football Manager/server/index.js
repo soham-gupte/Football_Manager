@@ -13,22 +13,6 @@ const db = mysql.createConnection({
     database: 'FootballDB'
 });
 
-// app.post('/create', (req, res) => {
-//     const team_name = req.body.team_name;
-//     const password = req.body.password;
-//     const email = req.body.email;
-// // 
-//     db.query('INSERT INTO Teams (team_name, password, email, budget) VALUES(?,?,?,10)', 
-//     [team_name, password, email], 
-//     (err, result) => {
-//         if (err) {
-//             console.log(err)
-//         } else {
-//             res.send("Values Inserted");
-//         }
-//     })
-// })
-
 app.post('/create', (req, res) => {
     const team_name = req.body.team_name;
     const password = req.body.password;
@@ -88,11 +72,38 @@ app.post(`/main`, (req, res) => {
     res.send({ team_name: team_name });
 });
 
+app.post('/retreivemarketplace', (req, res) => {
+    const team_name = req.params.team_name;
+
+    db.query('SELECT player_name, position, nationality, value FROM Players WHERE player_id IN (SELECT player_id FROM Marketplace)', (err, rows) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send("Internal Server Error");
+        } else {
+            if (rows.length > 0) {
+                const playerNames = rows.map(row => row.player_name);
+                const position = rows.map(row => row.position);
+                const nationality = rows.map(row => row.nationality);
+                const value = rows.map(row => row.value);
+
+                res.send({ player_name: playerNames, 
+                        position: position, 
+                        nationality: nationality,
+                        value: value });
+                console.log("player info sent")
+            } else {
+                res.send({ playerNames: [] });
+            }
+        }
+    });
+});
+
 app.post('/marketplace', (req, res) => {
     const team_name = req.body.team_name;
 
     
 });
+
 
 app.listen(3001, () => {
     console.log("SERVER IS RUNNING ON PORT 3001")
