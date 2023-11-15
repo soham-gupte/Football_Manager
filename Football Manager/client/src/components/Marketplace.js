@@ -128,7 +128,6 @@ export function Marketplace({ itemsPerPage }) {
                             <form class="form-inline">
                                 <input class="form-control mr-sm-2" type="search" placeholder="Search Player" aria-label="Search" value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)} />
-
                             </form>
                         </div>
                     </div>
