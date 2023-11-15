@@ -67,6 +67,50 @@ app.post('/login', (req, res) => {
     });
 });
 
+app.post('/squad', (req, res) => {
+    const team_name = req.body.team_name; // Assuming you send the team name in the request body
+
+    // Fetch playing 11
+    console.log("fetching squad info")
+    const playing11Query = `
+        SELECT Players.player_name
+        FROM Squad
+        JOIN Players ON Squad.player_id = Players.player_id
+        JOIN Teams ON Squad.team_id = Teams.team_id
+        WHERE Teams.team_name = ? AND Squad.isplay = 1;
+    `;
+
+    db.query(playing11Query, [team_name], (err1, playing11Rows) => {
+        if (err1) {
+            console.log(err1);
+            res.status(500).send("Internal Server Error");
+        } else {
+            // Fetch substitutes
+            const substitutesQuery = `
+                SELECT Players.player_name
+                FROM Squad
+                JOIN Players ON Squad.player_id = Players.player_id
+                JOIN Teams ON Squad.team_id = Teams.team_id
+                WHERE Teams.team_name = ? AND Squad.isplay = 0;
+            `;
+
+            db.query(substitutesQuery, [team_name], (err2, substitutesRows) => {
+                if (err2) {
+                    console.log(err2);
+                    res.status(500).send("Internal Server Error");
+                } else {
+                    const playing11Array = playing11Rows.map(row => row.player_name);
+                    const substitutesArray = substitutesRows.map(row => row.player_name);
+
+                    res.status(200).send({ playing11Array, substitutesArray });
+                    console.log("squad info sent")
+                }
+            });
+        }
+    });
+});
+
+
 app.post(`/main`, (req, res) => {
     const team_name = req.params.team_name;
     res.send({ team_name: team_name });
