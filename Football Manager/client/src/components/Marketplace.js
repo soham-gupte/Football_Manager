@@ -40,10 +40,6 @@ export function Marketplace({ itemsPerPage }) {
     // following the API or data you're working with.
     const [itemOffset, setItemOffset] = useState(0);
 
-
-    // Simulate fetching items from another resources.
-    // (This could be items from props; or items loaded in a local state
-    // from an API endpoint with useEffect and useState)
     const endOffset = itemOffset + itemsPerPage;
     console.log(`Loading items from ${itemOffset} to ${endOffset}`);
     const currentItems = players.slice(itemOffset, endOffset);
@@ -98,7 +94,6 @@ export function Marketplace({ itemsPerPage }) {
                             <form class="form-inline">
                                 <input class="form-control mr-sm-2" type="search" placeholder="Search Player" aria-label="Search" value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)} />
-
                             </form>
                         </div>
                     </div>
