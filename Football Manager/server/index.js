@@ -119,31 +119,9 @@ function givedate() {
 app.post('/buyplayer', (req, res) => {
     const team_name = req.body.team_name;
     const playerName = req.body.playerName;
-    // const team_id = 6;
-    // const player_id = 16;
 
     console.log(playerName);
     console.log(team_name);
-
-    // db.query('SELECT team_id FROM Teams WHERE team_name = ?', [team_name], (err, rows) => {
-    //     if (err) {
-    //         console.log(err);
-    //         res.status(555).send("Internal Server Error");
-    //     } else {
-    //         team_id = rows[0].value;
-    //         console.log(team_id);
-    //     }
-    // })
-
-    // db.query('SELECT player_id FROM Players WHERE player_name = ?', [playerName], (err, rows) => {
-    //     if (err) {
-    //         console.log(err);
-    //         res.status(555).send("Internal Server Error");
-    //     } else {
-    //         player_id = rows[0].value;
-    //         console.log(player_id);
-    //     }
-    // })
 
     db.query('SELECT budget, team_id FROM Teams WHERE team_name = ?', [team_name], (err, rows) => {
         if (err) {
