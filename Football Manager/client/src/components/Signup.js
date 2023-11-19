@@ -8,13 +8,13 @@
 //     const [password, setPassword] = useState("");
 //     const [email, setEmail] = useState("");
 //     const postteamname = () => {
-//       Axios.post('http://localhost:3001/main', {
+//       Axios.post('http://localhost:3005/main', {
 //           team_name: team_name,}).then(()=> {
 //             console.log("GOING TO MAIN PAGE");
 //           })
 //     };
 //     const addTeam = () => {
-//     Axios.post('http://localhost:3001/create', {
+//     Axios.post('http://localhost:3005/create', {
 //           team_name: team_name, 
 //           password: password, 
 //           email: email,}).then(()=> {
@@ -54,7 +54,7 @@ export function Signup() {
     const navigate = useNavigate();
 
     const addTeam = () => {
-        Axios.post('http://localhost:3001/create', {
+        Axios.post('http://localhost:3005/create', {
             team_name: team_name, 
             password: password, 
             email: email,

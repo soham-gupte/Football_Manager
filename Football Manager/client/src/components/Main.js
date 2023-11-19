@@ -157,7 +157,7 @@ export function Main() {
 
         // Fetch data from server if teamName exists
         if (team_name) {
-            axios.post('http://localhost:3001/squad', { team_name })
+            axios.post('http://localhost:3005/squad', { team_name })
                 .then(response => {
                     const { playing11Array, substitutesArray } = response.data;
 

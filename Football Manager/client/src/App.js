@@ -7,6 +7,7 @@ import { Main } from './components/Main';
 import { Marketplace } from './components/Marketplace';
 import { Menu } from './components/Menu';
 import { Trading } from './components/Trading';
+import { Transaction } from './components/Transaction';
 // import Axios from 'axios'
 
 function App() {
@@ -39,6 +40,10 @@ function App() {
 
           <Route path="/trading" element={
             <Trading/>
+          } />
+
+          <Route path="/transaction" element={
+            <Transaction/>
           } />
 
         </Routes>

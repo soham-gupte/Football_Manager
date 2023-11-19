@@ -9,7 +9,7 @@ export function Login() {
   const navigate = useNavigate();
 
   const login = () => {
-    Axios.post('http://localhost:3001/login', {
+    Axios.post('http://localhost:3005/login', {
       team_name: team_name,
       password: password,
     })

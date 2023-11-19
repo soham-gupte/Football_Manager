@@ -19,7 +19,7 @@ export function Menu() {
                 <a href='/marketplace'><button>Marketplace</button></a>
                 <a href='/trading'><button>Trading</button></a>
                 <a href='/notifications'><button>Notifications</button></a>
-                <a href='/transactions'><button>Transactions</button></a>
+                <a href='/transaction'><button>Transactions</button></a>
             </div>
         </div>
     )

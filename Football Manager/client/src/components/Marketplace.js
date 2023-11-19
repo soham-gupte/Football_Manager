@@ -61,7 +61,7 @@ export function Marketplace({ itemsPerPage }) {
     };
 
     const handleEditClick = (player_name) => {
-        Axios.post('http://localhost:3001/buyplayer', {
+        Axios.post('http://localhost:3005/buyplayer', {
           team_name: team_name,
           playerName: player_name,
         })
@@ -76,7 +76,7 @@ export function Marketplace({ itemsPerPage }) {
         //   }
         })
         .catch((error) => {
-          console.log("Error during login:", error);
+          console.log("Error : ", error);
           // console.log(error.response.data)
         //   if (error.response.data === "User not found") {
         //     setError("No user found with this team name");
@@ -95,7 +95,7 @@ export function Marketplace({ itemsPerPage }) {
             setTeamName(storedTeamName);
         }
 
-        Axios.post('http://localhost:3001/retreivemarketplace', {
+        Axios.post('http://localhost:3005/retreivemarketplace', {
             team_name: team_name,
             search_term: searchTerm,
         }).then((response) => {
