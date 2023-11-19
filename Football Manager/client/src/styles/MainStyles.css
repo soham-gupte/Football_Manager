@@ -11,6 +11,10 @@
     width: 17.5%;
 }
 
+.subs-btn {
+    margin-right: 7px;
+}
+
 .main-menu {
     display: flex;
     flex-direction: column;

@@ -7,10 +7,11 @@ import { Main } from './components/Main';
 import { Marketplace } from './components/Marketplace';
 import { Menu } from './components/Menu';
 import { Trading } from './components/Trading';
+import { Transaction } from './components/Transaction';
 // import Axios from 'axios'
 
 function App() {
-  
+
   // <Signup/>
   return (
     <div className="App">
@@ -18,34 +19,38 @@ function App() {
         <Routes>
 
           <Route path="/" element={
-            <Home/>
+            <Home />
           } />
 
           <Route path="/signup" element={
-            <Signup/>
+            <Signup />
           } />
 
           <Route path="/login" element={
-            <Login/>
+            <Login />
           } />
 
           <Route path="/main" element={
-            <Main/>
+            <Main />
           } />
 
           <Route path="/marketplace" element={
-            <Marketplace itemsPerPage={20}/>
+            <Marketplace itemsPerPage={20} />
           } />
 
           <Route path="/trading" element={
-            <Trading/>
+            <Trading />
+          } />
+
+          <Route path="/transaction" element={
+            <Transaction />
           } />
 
         </Routes>
       </Router>
     </div>
   );
-  
+
 }
 
 export default App;
