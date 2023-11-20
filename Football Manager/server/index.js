@@ -110,6 +110,38 @@ app.post('/squad', (req, res) => {
     });
 });
 
+app.post('/handleSwap', (req, res) => {
+    // const { team_name, player_name_playing11, player_name_substitute } = req.body;
+    const team_name = req.body.team_name;
+    const player_name_playing11 = req.body.player1;
+    const player_name_substitute = req.body.player2;
+
+    // Update is_play values in the Squad table for the players being swapped
+    const updatePlaying11Query = `
+        UPDATE Squad
+        SET isplay = CASE
+            WHEN player_id IN (SELECT player_id FROM Players WHERE player_name = ?) THEN 0
+            WHEN player_id IN (SELECT player_id FROM Players WHERE player_name = ?) THEN 1
+            ELSE isplay
+        END
+        WHERE team_id = (SELECT team_id FROM Teams WHERE team_name = ?);
+    `;
+
+    db.query(updatePlaying11Query, [player_name_playing11, player_name_substitute, team_name], (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send("Internal Server Error");
+        } else {
+            // Check if any rows were affected (successful update)
+            if (result.affectedRows > 0) {
+                res.status(200).send("Swap successful");
+            } else {
+                res.status(404).send("Player not found or unable to swap");
+            }
+        }
+    });
+});
+
 app.post(`/transactionHistory`, (req, res) => {
     const team_name = req.body.team_name;
     console.log(team_name);
@@ -152,7 +184,7 @@ app.post(`/main`, (req, res) => {
 app.post('/retreivemarketplace', (req, res) => {
     const team_name = req.body.team_name;
     const search_term = req.body.search_term;
-    let sql = 'SELECT player_name, position, nationality, value FROM Players WHERE player_id IN (SELECT player_id FROM Marketplace)';
+    let sql = 'SELECT player_name, position, nationality, value FROM Players WHERE player_id NOT IN (SELECT player_id FROM Squad)';
     const params = [];
     if (search_term) {
         sql += ' AND player_name LIKE ?';
