@@ -320,9 +320,32 @@ app.post('/buyplayer', (req, res) => {
                                                                                         console.log(err);
                                                                                         res.status(503).send("Internal Server Error");
                                                                                     } else {
-                                                                                        console.log("Transaction successful !");
+                                                                                        // console.log("Transaction successful !");
                                                                                     }
                                                                                 })
+                                                                            }
+                                                                        })
+
+                                                                        db.query('SELECT team_id FROM Marketplace WHERE player_id = ?', [player_id], (err, rows) => {
+                                                                            if (err) {
+                                                                                console.log(err);
+                                                                                res.status(503).send("Internal Server Error");
+                                                                            } else {
+                                                                                if (rows.length > 0) {
+                                                                                    const fromTeam = rows[0].team_id;
+                                                                                    if (fromTeam) {
+                                                                                        db.query('INSERT INTO SellingTeam (transfer_id, team_id) VALUES (?, ?)', [transferId, team_id], (err, rows) => {
+                                                                                            if (err) {
+                                                                                                console.log(err);
+                                                                                                res.status(503).send("Internal Server Error");
+                                                                                            } else {
+                                                                                                console.log("Transaction successful !");
+                                                                                            }
+                                                                                        })
+                                                                                    } else {
+                                                                                        console.log("Transaction successful (without from team)!");
+                                                                                    }
+                                                                                }
                                                                             }
                                                                         })
                                                                     }
