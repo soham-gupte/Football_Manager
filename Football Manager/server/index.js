@@ -442,55 +442,84 @@ app.post('/buyplayer', (req, res) => {
                                                         console.log(err);
                                                         res.status(503).send("Internal Server Error");
                                                     } else {
-                                                        db.query('INSERT INTO Squad (team_id, player_id, isplay) VALUES (?, ?, 0)', [team_id, player_id], (err, rows) => {
+                                                        db.query('INSERT INTO Transaction (transfer_date) VALUES (?)', [givedate()], (err, result) => {
                                                             if (err) {
                                                                 console.log(err);
-                                                                res.status(504).send("Internal Server Error");
+                                                                res.status(503).send("Internal Server Error");
                                                             } else {
-                                                                res.send("Enjoy your player ;)")
-                                                                db.query('INSERT INTO Transaction (transfer_date) VALUES (?)', [givedate()], (err, result) => {
+                                                                const transferId = result.insertId;
+
+                                                                db.query('INSERT INTO BuyingTeam (transfer_id, team_id) VALUES (?, ?)', [transferId, team_id], (err, rows) => {
                                                                     if (err) {
                                                                         console.log(err);
                                                                         res.status(503).send("Internal Server Error");
                                                                     } else {
-                                                                        const transferId = result.insertId;
-
-                                                                        db.query('INSERT INTO BuyingTeam (transfer_id, team_id) VALUES (?, ?)', [transferId, team_id], (err, rows) => {
+                                                                        db.query('INSERT INTO SoldPlayer (transfer_id, player_id) VALUES (?, ?)', [transferId, player_id], (err, rows) => {
                                                                             if (err) {
                                                                                 console.log(err);
                                                                                 res.status(503).send("Internal Server Error");
                                                                             } else {
-                                                                                db.query('INSERT INTO SoldPlayer (transfer_id, player_id) VALUES (?, ?)', [transferId, player_id], (err, rows) => {
+                                                                                db.query('SELECT team_id FROM Marketplace WHERE player_id = ?', [player_id], (err, rows) => {
                                                                                     if (err) {
                                                                                         console.log(err);
                                                                                         res.status(503).send("Internal Server Error");
                                                                                     } else {
-                                                                                        // console.log("Transaction successful !");
+                                                                                        if (rows.length > 0) {
+                                                                                            const fromTeam = rows[0].team_id;
+                                                                                            if (fromTeam) {
+                                                                                                db.query('INSERT INTO SellingTeam (transfer_id, team_id) VALUES (?, ?)', [transferId, fromTeam], (err, rows) => {
+                                                                                                    if (err) {
+                                                                                                        console.log(err);
+                                                                                                        res.status(503).send("Internal Server Error");
+                                                                                                    } else {
+                                                                                                        db.query('UPDATE Squad SET team_id = ? WHERE (team_id = ?) and (player_id = ?)', [team_id, fromTeam, player_id], (err, rows) => {
+                                                                                                            if (err) {
+                                                                                                                console.log(err);
+                                                                                                                res.status(504).send("Internal Server Error");
+                                                                                                            } else {
+                                                                                                                db.query('DELETE FROM Marketplace WHERE (player_id = ?)', [player_id], (err, rows) => {
+                                                                                                                    if (err) {
+                                                                                                                        console.log(err);
+                                                                                                                        res.status(504).send("Internal Server Error");
+                                                                                                                    } else {
+                                                                                                                        db.query('UPDATE Teams SET budget = budget + ? WHERE (team_id = ?)', [playerValue, fromTeam], (err, rows) => {
+                                                                                                                            if (err) {
+                                                                                                                                console.log(err);
+                                                                                                                                res.status(504).send("Internal Server Error");
+                                                                                                                            } else {
+                                                                                                                                console.log("DONE");
+                                                                                                                            }
+                                                                                                                        })
+                                                                                                                        console.log("Transaction comnplete. Backend updated !");
+                                                                                                                    }
+                                                                                                                })
+                                                                                                            }
+                                                                                                        })
+                                                                                                        console.log("Transaction successful !");
+                                                                                                    }
+                                                                                                })
+                                                                                            } else {
+                                                                                                db.query('INSERT INTO Squad (team_id, player_id, isplay) VALUES (?, ?, 0)', [team_id, player_id], (err, rows) => {
+                                                                                                    if (err) {
+                                                                                                        console.log(err);
+                                                                                                        res.status(504).send("Internal Server Error");
+                                                                                                    } else {
+                                                                                                        db.query('DELETE FROM Marketplace WHERE (player_id = ?)', [player_id], (err, rows) => {
+                                                                                                            if (err) {
+                                                                                                                console.log(err);
+                                                                                                                res.status(504).send("Internal Server Error");
+                                                                                                            } else {
+                                                                                                                console.log("Transaction comnplete. Backend updated !");
+                                                                                                            }
+                                                                                                        })
+                                                                                                    }
+                                                                                                })
+                                                                                                
+                                                                                                console.log("Transaction successful (without from team)!");
+                                                                                            }
+                                                                                        }
                                                                                     }
                                                                                 })
-                                                                            }
-                                                                        })
-
-                                                                        db.query('SELECT team_id FROM Marketplace WHERE player_id = ?', [player_id], (err, rows) => {
-                                                                            if (err) {
-                                                                                console.log(err);
-                                                                                res.status(503).send("Internal Server Error");
-                                                                            } else {
-                                                                                if (rows.length > 0) {
-                                                                                    const fromTeam = rows[0].team_id;
-                                                                                    if (fromTeam) {
-                                                                                        db.query('INSERT INTO SellingTeam (transfer_id, team_id) VALUES (?, ?)', [transferId, team_id], (err, rows) => {
-                                                                                            if (err) {
-                                                                                                console.log(err);
-                                                                                                res.status(503).send("Internal Server Error");
-                                                                                            } else {
-                                                                                                console.log("Transaction successful !");
-                                                                                            }
-                                                                                        })
-                                                                                    } else {
-                                                                                        console.log("Transaction successful (without from team)!");
-                                                                                    }
-                                                                                }
                                                                             }
                                                                         })
                                                                     }
