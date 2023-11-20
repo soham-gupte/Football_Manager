@@ -9,6 +9,7 @@ import { GiTrade } from "react-icons/gi";
 import { Button } from 'react-bootstrap';
 import { Modal } from 'react-bootstrap';
 import { InputGroup, Form } from 'react-bootstrap';
+import Axios from 'axios';
 
 export function Main() {
 
@@ -21,6 +22,18 @@ export function Main() {
         setSelectedElementA(indexA);
 
     };
+
+    const [team_name, setTeamName] = useState('');
+
+    useEffect(() => {
+        // Retrieve username from localStorage
+        const storedTeamName = localStorage.getItem('team_name');
+
+        // Update state with the retrieved username
+        if (storedTeamName) {
+            setTeamName(storedTeamName);
+        }
+    }, []);
 
     const handleSwap = (indexB) => {
         if (selectedElementA !== null) {

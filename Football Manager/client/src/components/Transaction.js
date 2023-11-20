@@ -16,11 +16,11 @@ export function Transaction() {
             // Update the team_name using setTeamName
             setTeamName(storedTeamName);
 
-            Axios.post('http://localhost:3005/transactionHistory', {
+            Axios.post('http://localhost:3001/transactionHistory', {
                 team_name: storedTeamName,
             }).then((response) => {
-                console.log("Data received:", response.data);
-                setTransferIDs(response.data)
+                console.log("Data received:", response.data.data.player_name);
+                setTransferIDs(response.data);
             }).catch((error) => {
                 console.log("Error occured : ", error);
             });
