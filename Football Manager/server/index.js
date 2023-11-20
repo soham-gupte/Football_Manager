@@ -17,7 +17,7 @@ app.post('/create', (req, res) => {
     const team_name = req.body.team_name;
     const password = req.body.password;
     const email = req.body.email;
-
+// 
     db.query('INSERT INTO Teams (team_name, password, email, budget) VALUES(?,?,?,10)', 
     [team_name, password, email], 
     (err, result) => {
@@ -105,6 +105,70 @@ app.post('/squad', (req, res) => {
                     console.log("squad info sent")
                 }
             });
+        }
+    });
+});
+
+app.post('/handleSwap', (req, res) => {
+    // const { team_name, player_name_playing11, player_name_substitute } = req.body;
+    const team_name = req.body.team_name;
+    const player_name_playing11 = req.body.player1;
+    const player_name_substitute = req.body.player2;
+
+    // Update is_play values in the Squad table for the players being swapped
+    const updatePlaying11Query = `
+        UPDATE Squad
+        SET isplay = CASE
+            WHEN player_id IN (SELECT player_id FROM Players WHERE player_name = ?) THEN 0
+            WHEN player_id IN (SELECT player_id FROM Players WHERE player_name = ?) THEN 1
+            ELSE isplay
+        END
+        WHERE team_id = (SELECT team_id FROM Teams WHERE team_name = ?);
+    `;
+
+    db.query(updatePlaying11Query, [player_name_playing11, player_name_substitute, team_name], (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send("Internal Server Error");
+        } else {
+            // Check if any rows were affected (successful update)
+            if (result.affectedRows > 0) {
+                res.status(200).send("Swap successful");
+            } else {
+                res.status(404).send("Player not found or unable to swap");
+            }
+        }
+    });
+});
+
+app.post('/handleSwap', (req, res) => {
+    // const { team_name, player_name_playing11, player_name_substitute } = req.body;
+    const team_name = req.body.team_name;
+    const player_name_playing11 = req.body.player1;
+    const player_name_substitute = req.body.player2;
+
+    // Update is_play values in the Squad table for the players being swapped
+    const updatePlaying11Query = `
+        UPDATE Squad
+        SET isplay = CASE
+            WHEN player_id IN (SELECT player_id FROM Players WHERE player_name = ?) THEN 0
+            WHEN player_id IN (SELECT player_id FROM Players WHERE player_name = ?) THEN 1
+            ELSE isplay
+        END
+        WHERE team_id = (SELECT team_id FROM Teams WHERE team_name = ?);
+    `;
+
+    db.query(updatePlaying11Query, [player_name_playing11, player_name_substitute, team_name], (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send("Internal Server Error");
+        } else {
+            // Check if any rows were affected (successful update)
+            if (result.affectedRows > 0) {
+                res.status(200).send("Swap successful");
+            } else {
+                res.status(404).send("Player not found or unable to swap");
+            }
         }
     });
 });
@@ -211,9 +275,91 @@ app.post(`/main`, (req, res) => {
     res.send({ team_name: team_name });
 });
 
+app.post(`/transactionHistory`, (req, res) => {
+    const team_name = req.body.team_name;
+    console.log(team_name);
+    db.query('SELECT team_id FROM Teams WHERE team_name = ?', [team_name], (err, rows) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send("Internal Server Error");
+        } else {
+            if (rows.length > 0) {
+                const team_id = rows[0].team_id;
+                db.query('SELECT transfer_id FROM Transaction WHERE transfer_id IN (SELECT transfer_id FROM BuyingTeam WHERE team_id = ?)', [team_id], (err, rows) => {
+                    if (err) {
+                        console.log(err);
+                        res.status(500).send("Internal Server Error");
+                    } else {
+                        if (rows.length > 0) {
+                            const buyingTransferIDs = rows.map(row => row.transfer_id);
+                            console.log(buyingTransferIDs);
+                            db.query('SELECT player_name, value FROM Players WHERE player_id IN (SELECT player_id FROM SoldPlayer WHERE transfer_id IN (SELECT transfer_id FROM Transaction WHERE transfer_id IN (SELECT transfer_id FROM BuyingTeam WHERE team_id = ?)));', [team_id], (err, rows) => {
+                                if (err) {
+                                    console.log(err);
+                                    res.status(500).send("Internal Server Error");
+                                } else {
+                                    if (rows.length > 0) {
+                                        const boughtPlayerNames = rows.map(row => row.player_name);
+                                        const boughtPlayerValues = rows.map(row => row.value);
+                                    } else {
+                                        console.log("ABE YAAR");
+                                    }
+                                }
+                            })
+                            // res.send(transferIDs);
+                        } else {
+                            // res.send("Acchahhahah");
+                        }
+                    }
+                })
+                db.query('SELECT transfer_id FROM Transaction WHERE transfer_id IN (SELECT transfer_id FROM SellingTeam WHERE team_id = ?)', [team_id], (err, rows) => {
+                    if (err) {
+                        console.log(err);
+                        res.status(500).send("Internal Server Error");
+                    } else {
+                        if (rows.length > 0) {
+                            const sellingTransferIDs = rows.map(row => row.transfer_id);
+                            console.log(sellingTransferIDs);
+                            db.query('SELECT player_name, value FROM Players WHERE player_id IN (SELECT player_id FROM SoldPlayer WHERE transfer_id IN (SELECT transfer_id FROM Transaction WHERE transfer_id IN (SELECT transfer_id FROM BuyingTeam WHERE team_id = ?)));', [team_id], (err, rows) => {
+                                if (err) {
+                                    console.log(err);
+                                    res.status(500).send("Internal Server Error");
+                                } else {
+                                    if (rows.length > 0) {
+                                        const soldPlayerNames = rows.map(row => row.player_name);
+                                        const soldPlayerValues = rows.map(row => row.value);
+                                        const dataToSend = {
+                                            buyingTransferIDs,
+                                            boughtPlayerNames,
+                                            boughtPlayerValues,
+                                            sellingTransferIDs,
+                                            soldPlayerNames,
+                                            soldPlayerValues
+                                        };
+                                        res.send(dataToSend);
+                                    } else {
+                                        console.log("ABE YAAR");
+                                    }
+                                }
+                            })
+                            // res.send(transferIDs);
+                        } else {
+                            res.send("Acchahhahah");
+                        }
+                    }
+                })
+            } else {
+                console.log(team_name);
+                console.log("abe bsdk");
+            }
+        }
+    })
+});
+
 app.post('/retreivemarketplace', (req, res) => {
     const team_name = req.body.team_name;
     const search_term = req.body.search_term;
+    let sql = 'SELECT player_name, position, nationality, value FROM Players WHERE player_id NOT IN (SELECT player_id FROM Squad)';
     let sql = 'SELECT player_name, position, nationality, value FROM Players WHERE player_id NOT IN (SELECT player_id FROM Squad)';
     const params = [];
     if (search_term) {

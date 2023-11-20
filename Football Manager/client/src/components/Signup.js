@@ -10,7 +10,7 @@ export function Signup() {
     const navigate = useNavigate();
 
     const addTeam = () => {
-        Axios.post('http://localhost:3005/create', {
+        Axios.post('http://localhost:3001/create', {
             team_name: team_name, 
             password: password, 
             email: email,
