@@ -375,7 +375,17 @@ app.post('/listOnMarketplace', (req, res) => {
                 db.query(insertIntoMarketplaceQuery, [player_id, team_id], (err) => {
                   if (err) {
                     console.error(err);
-                    res.status(500).send('Internal Server Error');
+                    if (err.code === 'ER_DUP_ENTRY') {
+                    db.query('UPDATE Marketplace SET team_id = ? WHERE (player_id = ?)', [team_id, player_id], (err, rows) => {
+                        if (err) {
+                            console.error(err);
+                            res.status(500).send('Internal Server Error');
+                        } else {
+                            console.log("WAY around");
+                        }
+                    })
+                    }
+                    // res.status(500).send('Internal Server Error');
                   } else {
                     res.send('Player listed on Marketplace successfully');
                   }
@@ -477,7 +487,7 @@ app.post('/buyplayer', (req, res) => {
                                                                                                         console.log(err);
                                                                                                         res.status(503).send("Internal Server Error");
                                                                                                     } else {
-                                                                                                        db.query('UPDATE Squad SET team_id = ? WHERE (team_id = ?) and (player_id = ?)', [team_id, fromTeam, player_id], (err, rows) => {
+                                                                                                        db.query('UPDATE Squad SET team_id = ? WHERE (team_id = ?) and (player_id = ?)', [fromTeam, team_id, player_id], (err, rows) => {
                                                                                                             if (err) {
                                                                                                                 console.log(err);
                                                                                                                 res.status(504).send("Internal Server Error");
