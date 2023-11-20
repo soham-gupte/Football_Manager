@@ -66,6 +66,28 @@ app.post('/login', (req, res) => {
     });
 });
 
+app.post('/getTeamBudget', (req, res) => {
+    const team_name = req.body.team_name;
+    console.log(team_name)
+
+    const getTeamBudgetQuery = 'SELECT budget FROM Teams WHERE team_name = ?';
+
+    db.query(getTeamBudgetQuery, [team_name], (err, rows) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Internal Server Error');
+        } else {
+            if (rows.length > 0) {
+                const teamBudget = rows[0].budget;
+                console.log(teamBudget);
+                res.send({ teamBudget });
+            } else {
+                res.status(404).send('Team not found');
+            }
+        }
+    });
+});
+
 app.post('/squad', (req, res) => {
     const team_name = req.body.team_name; // Assuming you send the team name in the request body
 
