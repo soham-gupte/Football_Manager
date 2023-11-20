@@ -264,7 +264,7 @@ app.post(`/transactionHistory`, (req, res) => {
 app.post('/retreivemarketplace', (req, res) => {
     const team_name = req.body.team_name;
     const search_term = req.body.search_term;
-    let sql = 'SELECT player_name, position, nationality, value FROM Players WHERE player_id NOT IN (SELECT player_id FROM Squad)';
+    let sql = 'SELECT player_name, position, nationality, value FROM Players WHERE player_id in (SELECT player_id FROM Marketplace)';
     const params = [];
     if (search_term) {
         sql += ' AND player_name LIKE ?';
