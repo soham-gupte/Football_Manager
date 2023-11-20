@@ -18,9 +18,9 @@ export function Menu() {
             <div className='main-menu-contents'>
                 <h1>{team_name}</h1>
                 <a href='/marketplace'><Button variant="secondary">Marketplace</Button></a>
-                <a href='/trading'><Button variant="secondary">Trading</Button></a>
                 <a href='/notifications'><Button variant="secondary">Notifications</Button></a>
                 <a href='/transaction'><Button variant="secondary">Transactions</Button></a>
+                <a href='/'><Button variant="secondary">Sign Out</Button></a>
             </div>
         </div>
     )

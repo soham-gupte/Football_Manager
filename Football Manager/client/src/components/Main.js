@@ -85,6 +85,16 @@ export function Main() {
         setModalName(name);
     }
 
+    // For Modal pop-up
+    const [show1, setShow1] = useState(false);
+    const [modalName1, setModalName1] = useState('');
+
+    const handleClose1 = () => setShow1(false);
+    const handleShow1 = (name) => {
+        setShow1(true);
+        setModalName1(name);
+    }
+
     return (
 
         <div className="main">
@@ -137,6 +147,27 @@ export function Main() {
                             <Button variant="primary">Confirm</Button>
                         </Modal.Footer>
                     </Modal>
+
+                    <Modal
+                        show={show1}
+                        onHide={handleClose1}
+                        backdrop="static"
+                        keyboard={false}
+                    >
+                        <Modal.Header closeButton>
+                            <Modal.Title>Confirm Sale?</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            Are you sure you want to put {modalName1} on the marketplace for sale?
+                            
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="secondary" onClick={handleClose1}>
+                                NO
+                            </Button>
+                            <Button variant="primary" onClick={handleClose1}>YES</Button>
+                        </Modal.Footer>
+                    </Modal>
                 </div>
                 <div className="player-content">
                     {substitutesArray.map((item, index) => {
@@ -148,7 +179,7 @@ export function Main() {
                                 </div>
 
                                 <Button className="subs-btn" variant="primary" onClick={() => handleSwap(index)}><FaAnglesUp /></Button>
-                                <Button className="subs-btn" variant="primary">Sell <MdSell /></Button>
+                                <Button className="subs-btn" variant="primary" onClick={() => handleShow1(item.name)}>Sell <MdSell /></Button>
                                 <Button className="subs-btn" variant="primary" onClick={() => handleShow(item.name)}>Trade <GiTrade /></Button>
                             </div>
                         )

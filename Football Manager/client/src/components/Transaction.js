@@ -5,7 +5,8 @@ import ReactPaginate from 'react-paginate';
 
 export function Transaction() {
     // Use useState to manage the team_name value
-    const [teamName, setTeamName] = useState("hello");
+    const [teamName, setTeamName] = useState("");
+    const [transferIDs, setTransferIDs] = useState([]);
 
     useEffect(() => {
         // Retrieve team_name from localStorage
@@ -15,12 +16,13 @@ export function Transaction() {
             // Update the team_name using setTeamName
             setTeamName(storedTeamName);
 
-            Axios.post('http://localhost:3001/transactionHistory', {
+            Axios.post('http://localhost:3005/transactionHistory', {
                 team_name: storedTeamName,
             }).then((response) => {
-                console.log("boooooo");
+                console.log("Data received:", response.data);
+                setTransferIDs(response.data)
             }).catch((error) => {
-                console.log("Some error occurred");
+                console.log("Error occured : ", error);
             });
         }
     }, []);
@@ -28,6 +30,11 @@ export function Transaction() {
     return (
         <div>
             <h1>{teamName}</h1>
+            {/* <ul>
+                {transferIDs.map((transferID, index) => (
+                    <li key={index}>{transferID}</li>
+                ))}
+            </ul> */}
         </div>
     );
 }
