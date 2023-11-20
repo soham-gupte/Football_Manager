@@ -96,7 +96,18 @@ export function Main() {
     const [show1, setShow1] = useState(false);
     const [modalName1, setModalName1] = useState('');
 
+    function confirmSell(name){
+        handleClose1();
+        console.log("selling ", name)
+        axios.post('http://localhost:3001/listOnMarketplace', { 
+            player_name: name,
+            team_name : localStorage.getItem('team_name'),
+        })
+    }
+
     const handleClose1 = () => setShow1(false);
+
+    //to list a player in the marketplace
     const handleShow1 = (name) => {
         setShow1(true);
         setModalName1(name);
@@ -172,7 +183,7 @@ export function Main() {
                             <Button variant="secondary" onClick={handleClose1}>
                                 NO
                             </Button>
-                            <Button variant="primary" onClick={handleClose1}>YES</Button>
+                            <Button variant="primary" onClick={() => confirmSell(modalName1)}>YES</Button>
                         </Modal.Footer>
                     </Modal>
                 </div>

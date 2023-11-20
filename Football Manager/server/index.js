@@ -298,6 +298,102 @@ app.post('/marketplace', (req, res) => {
     const team_name = req.body.team_name;
 });
 
+// app.post('/listOnMarketplace', (req, res) => {
+//     const player_name = req.body.player_name;
+//     const team_name = req.body.team_name;
+  
+//     // Retrieve player_id and team_id corresponding to player_name and team_name
+//     const getPlayerTeamIdsQuery = `
+//     SELECT Squad.player_id, Squad.team_id
+//     FROM Squad
+//     JOIN Players ON Squad.player_id = Players.player_id
+//     JOIN Teams ON Squad.team_id = Teams.team_id
+//     WHERE Players.player_name = ? AND Teams.team_name = ?
+//     `;
+    
+//     db.query(getPlayerTeamIdsQuery, [player_name, team_name], (err, rows) => {
+//       if (err) {
+//         console.error(err);
+//         res.status(500).send('Internal Server Error');
+//       } else {
+//         if (rows.length > 0) {
+//           const player_id = rows[0].player_id;
+//           const team_id = rows[0].team_id;
+  
+//           // Insert into the Marketplace table
+//           const insertIntoMarketplaceQuery = 'INSERT INTO Marketplace (player_id, team_id) VALUES (?, ?)';
+  
+//           db.query(insertIntoMarketplaceQuery, [player_id, team_id], (err) => {
+//             if (err) {
+//               console.error(err);
+//               res.status(500).send('Internal Server Error');
+//             } else {
+//               res.send('Player listed on Marketplace successfully');
+//             }
+//           });
+//         } else {
+//           res.status(404).send('Player not found in the specified team');
+//         }
+//       }
+//     });
+// });
+
+app.post('/listOnMarketplace', (req, res) => {
+    const player_name = req.body.player_name;
+    const team_name = req.body.team_name;
+  
+    // Retrieve player_id and team_id corresponding to player_name and team_name
+    const getPlayerTeamIdsQuery = `
+      SELECT Squad.player_id, Squad.team_id
+      FROM Squad
+      JOIN Players ON Squad.player_id = Players.player_id
+      JOIN Teams ON Squad.team_id = Teams.team_id
+      WHERE Players.player_name = ? AND Teams.team_name = ?
+    `;
+  
+    db.query(getPlayerTeamIdsQuery, [player_name, team_name], (err, rows) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+      } else {
+        if (rows.length > 0) {
+          const player_id = rows[0].player_id;
+          const team_id = rows[0].team_id;
+  
+          // Check if the player is already in the Marketplace
+          const checkPlayerInMarketplaceQuery = 'SELECT * FROM Marketplace WHERE player_id = ? AND team_id = ?';
+  
+          db.query(checkPlayerInMarketplaceQuery, [player_id, team_id], (err, marketplaceRows) => {
+            if (err) {
+              console.error(err);
+              res.status(500).send('Internal Server Error');
+            } else {
+              if (marketplaceRows.length === 0) {
+                // Player is not in the Marketplace, insert into the Marketplace table
+                const insertIntoMarketplaceQuery = 'INSERT INTO Marketplace (player_id, team_id) VALUES (?, ?)';
+  
+                db.query(insertIntoMarketplaceQuery, [player_id, team_id], (err) => {
+                  if (err) {
+                    console.error(err);
+                    res.status(500).send('Internal Server Error');
+                  } else {
+                    res.send('Player listed on Marketplace successfully');
+                  }
+                });
+              } else {
+                // Player is already in the Marketplace
+                res.status(409).send('Player is already listed on the Marketplace');
+              }
+            }
+          });
+        } else {
+          res.status(404).send('Player not found in the specified team');
+        }
+      }
+    });
+  });
+  
+
 function givedate() {
     showdate = new Date();
     // displayTodaysdate = showdate.getFullYear()+'/'+showdate.getMonth()+'/'+showdate.getDate()+'/';
