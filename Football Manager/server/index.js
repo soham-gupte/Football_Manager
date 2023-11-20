@@ -109,7 +109,6 @@ app.post('/squad', (req, res) => {
     });
 });
 
-<<<<<<< HEAD
 app.post('/handleSwap', (req, res) => {
     // const { team_name, player_name_playing11, player_name_substitute } = req.body;
     const team_name = req.body.team_name;
@@ -175,8 +174,6 @@ app.post(`/transactionHistory`, (req, res) => {
     //     }
     // })
 });
-=======
->>>>>>> soham
 
 app.post(`/main`, (req, res) => {
     const team_name = req.params.team_name;
