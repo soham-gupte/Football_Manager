@@ -35,18 +35,6 @@ export function Main() {
         }
     }, []);
 
-    const [team_name, setTeamName] = useState('');
-
-    useEffect(() => {
-        // Retrieve username from localStorage
-        const storedTeamName = localStorage.getItem('team_name');
-
-        // Update state with the retrieved username
-        if (storedTeamName) {
-            setTeamName(storedTeamName);
-        }
-    }, []);
-
     const handleSwap = (indexB, team_name) => {
         if (selectedElementA !== null) {
             // Create copies of the arrays
