@@ -17,7 +17,7 @@ app.post('/create', (req, res) => {
     const team_name = req.body.team_name;
     const password = req.body.password;
     const email = req.body.email;
-// 
+
     db.query('INSERT INTO Teams (team_name, password, email, budget) VALUES(?,?,?,10)', 
     [team_name, password, email], 
     (err, result) => {
@@ -110,6 +110,39 @@ app.post('/squad', (req, res) => {
     });
 });
 
+app.post(`/transactionHistory`, (req, res) => {
+    const team_name = req.body.team_name;
+    console.log(team_name);
+    res.send(team_name);
+    
+    // db.query('SELECT team_id FROM Teams WHERE team_name = ?', [team_name], (err, rows) => {
+    //     if (err) {
+    //         console.log(err);
+    //         res.status(500).send("Internal Server Error");
+    //     } else {
+    //         if (rows.length > 0) {
+    //             const team_id = rows[0].team_id;
+    //             db.query('SELECT transfer_id FROM Transaction WHERE transfer_id IN (SELECT transfer_id FROM BuyingTeam WHERE team_name = ?)', [team_name], (err, rows) => {
+    //                 if (err) {
+    //                     console.log(err);
+    //                     res.status(500).send("Internal Server Error");
+    //                 } else {
+    //                     if (rows.length > 0) {
+    //                         const transferIDs = rows.transfer_id;
+    //                         console.log(transferIDs);
+    //                         res.send("Hello");
+    //                     } else {
+    //                         res.send("Acchahhahah");
+    //                     }
+    //                 }
+    //             })
+    //         } else {
+    //             console.log(team_name);
+    //             console.log("abe bsdk");
+    //         }
+    //     }
+    // })
+});
 
 app.post(`/main`, (req, res) => {
     const team_name = req.params.team_name;
