@@ -1,33 +1,35 @@
 import Axios from "axios";
 import { useState, useEffect } from "react";
+import { useNavigate, Link } from 'react-router-dom';
+import { BrowserRouter, Router } from 'react-router-dom';
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Button, Modal, Input } from 'react-bootstrap';
 import ReactDOM from 'react-dom';
 import ReactPaginate from 'react-paginate';
 
-function Items({ currentItems }) {
+function Items({ currentItems, handleEditClick }) {
     return (
-        <>
-            {currentItems &&
-                currentItems.map((item, index) => (
-                    <tr>
-                        <td>{index + 1}</td>
-                        <td>{item.player_name}</td>
-                        <td>{item.position}</td>
-                        <td>{item.nationality}</td>
-                        <td>{item.value}</td>
-                        <td>
-                            <a href="#" class="view" title="View" data-toggle="tooltip" style={{ color: "#10ab80" }}><i class="material-icons">&#xE417;</i></a>
-                            <a href="#" class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
-                            <a href="#" class="delete" title="Delete" data-toggle="tooltip" style={{ color: "red" }}><i class="material-icons">&#xE872;</i></a>
-
-                        </td>
-                    </tr>
-                ))}
-        </>
+      <>
+        {currentItems &&
+          currentItems.map((item, index) => (
+            <tr key={index}>
+              <td>{index + 1}</td>
+              <td>{item.player_name}</td>
+              <td>{item.position}</td>
+              <td>{item.nationality}</td>
+              <td>{item.value}</td>
+              <td>
+                <a href="#" className="view" title="View" data-toggle="tooltip" style={{ color: "#10ab80" }}><i className="material-icons">&#xE417;</i></a>
+                <a href="#" className="edit" title="Edit" data-toggle="tooltip" onClick={() => handleEditClick(item.player_name)}><i className="material-icons">&#xE254;</i></a>
+                <a href="#" className="delete" title="Delete" data-toggle="tooltip" style={{ color: "red" }}><i className="material-icons">&#xE872;</i></a>
+              </td>
+            </tr>
+          ))}
+      </>
     );
-}
+  }
+  
 
 export function Marketplace({ itemsPerPage }) {
 
@@ -35,11 +37,16 @@ export function Marketplace({ itemsPerPage }) {
 
     const [team_name, setTeamName] = useState('');
     const [players, setPlayers] = useState([]);
+    const [error, setError] = useState("");
 
     // Here we use item offsets; we could also use page offsets
     // following the API or data you're working with.
     const [itemOffset, setItemOffset] = useState(0);
+    const navigate = useNavigate();  // Initialize useNavigate
 
+    // Simulate fetching items from another resources.
+    // (This could be items from props; or items loaded in a local state
+    // from an API endpoint with useEffect and useState)
     const endOffset = itemOffset + itemsPerPage;
     console.log(`Loading items from ${itemOffset} to ${endOffset}`);
     const currentItems = players.slice(itemOffset, endOffset);
@@ -52,6 +59,33 @@ export function Marketplace({ itemsPerPage }) {
         );
         setItemOffset(newOffset);
     };
+
+    const handleEditClick = (player_name) => {
+        Axios.post('http://localhost:3001/buyplayer', {
+          team_name: team_name,
+          playerName: player_name,
+        })
+        .then((response) => {
+          console.log("SUCCESS");
+        //   // Check if the response includes data indicating success
+        //   if (response.data && response.data.data === "Login Successful") {
+        //     localStorage.setItem('team_name', team_name);
+        //     navigate('/main'); // Navigate to /main directly
+        //   } else {
+        //     setError(`No team with the name ${team_name} exists`);
+        //   }
+        })
+        .catch((error) => {
+          console.log("Error : ", error);
+          // console.log(error.response.data)
+        //   if (error.response.data === "User not found") {
+        //     setError("No user found with this team name");
+        //   }
+        //   else {
+        //     setError("Wrong password. Please try again.");
+        //   }
+    });
+}
 
     useEffect(() => {
         const storedTeamName = localStorage.getItem('team_name');
@@ -114,7 +148,7 @@ export function Marketplace({ itemsPerPage }) {
                                 </tr>
                             </thead>
                             <tbody>
-                                <Items currentItems={currentItems} />
+                                <Items currentItems={currentItems} handleEditClick={handleEditClick} />
                             </tbody>
                         </table>
                         <ReactPaginate
@@ -139,6 +173,8 @@ export function Marketplace({ itemsPerPage }) {
 }
 
 ReactDOM.render(
-    <Marketplace itemsPerPage={20} />,
+    <BrowserRouter>
+      <Marketplace itemsPerPage={20} />
+    </BrowserRouter>,
     document.getElementById('root')
-);
+  );
