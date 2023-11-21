@@ -67,23 +67,11 @@ export function Marketplace({ itemsPerPage }) {
         })
         .then((response) => {
           console.log("SUCCESS");
-        //   // Check if the response includes data indicating success
-        //   if (response.data && response.data.data === "Login Successful") {
-        //     localStorage.setItem('team_name', team_name);
-        //     navigate('/main'); // Navigate to /main directly
-        //   } else {
-        //     setError(`No team with the name ${team_name} exists`);
-        //   }
+        
         })
         .catch((error) => {
           console.log("Error : ", error);
-          // console.log(error.response.data)
-        //   if (error.response.data === "User not found") {
-        //     setError("No user found with this team name");
-        //   }
-        //   else {
-        //     setError("Wrong password. Please try again.");
-        //   }
+          
     });
 }
 
@@ -95,7 +83,7 @@ export function Marketplace({ itemsPerPage }) {
             setTeamName(storedTeamName);
         }
 
-        Axios.post('http://localhost:3001/retreivemarketplace', {
+        Axios.post('http://localhost:3001/retreivemarketplace', {   
             team_name: team_name,
             search_term: searchTerm,
         }).then((response) => {
