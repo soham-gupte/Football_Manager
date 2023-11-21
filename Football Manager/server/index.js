@@ -411,10 +411,9 @@ app.post('/makerequest', (req, res) => {
 })
 
 function givedate() {
-    showdate = new Date();
-    // displayTodaysdate = showdate.getFullYear()+'/'+showdate.getMonth()+'/'+showdate.getDate()+'/';
-    hehe = showdate.toDateString();
-    return hehe;
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0];
+    return formattedDate;
 }
 
 app.post('/buyplayer', (req, res) => {
