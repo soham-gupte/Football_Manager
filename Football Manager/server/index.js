@@ -491,7 +491,7 @@ app.post('/buyplayer', (req, res) => {
                                                                                                         console.log(err);
                                                                                                         res.status(503).send("Internal Server Error");
                                                                                                     } else {
-                                                                                                        db.query('UPDATE Squad SET team_id = ? WHERE (team_id = ?) and (player_id = ?)', [fromTeam, team_id, player_id], (err, rows) => {
+                                                                                                        db.query('UPDATE Squad SET team_id = ? WHERE (team_id = ?) and (player_id = ?)', [team_id, fromTeam, player_id], (err, rows) => {
                                                                                                             if (err) {
                                                                                                                 console.log(err);
                                                                                                                 res.status(504).send("Internal Server Error");
