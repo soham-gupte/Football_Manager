@@ -84,7 +84,7 @@ export function Notifications() {
             <div className="crud shadow-lg p-3 mb-5 mt-5 bg-body rounded">
                 <div class="row ">
 
-                    <div class="col-sm-3 offset-sm-2 mt-5 mb-4 text-gred" style={{ color: "green" }}><h2><b>Transactions</b></h2></div>
+                    <div class="col-sm-3 offset-sm-2 mt-5 mb-4 text-gred" style={{ color: "green" }}><h2><b>Notifications</b></h2></div>
 
                 </div>
                 <div class="row">

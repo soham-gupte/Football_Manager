@@ -21,7 +21,7 @@ function Items({ currentItems, handleEditClick }) {
               <td>{item.nationality}</td>
               <td>{item.value}</td>
               <td>
-                <a href="#" className="edit" title="Edit" data-toggle="tooltip" onClick={() => handleEditClick(item.player_name)}><IoCloudDownload /></a>
+                <a href="/main" className="edit" title="Edit" data-toggle="tooltip" onClick={() => handleEditClick(item.player_name)}><IoCloudDownload /></a>
               </td>
             </tr>
           ))}
