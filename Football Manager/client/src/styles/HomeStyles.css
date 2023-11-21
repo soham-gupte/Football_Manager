@@ -3,3 +3,26 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
 }
+
+
+.signup-login-btn {
+    color: white;
+    background-color: rgba(10, 101, 78, 0.0);
+    backdrop-filter: blur(40px);
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    display: inline-block; /* Align to the center */
+    margin-top: 200px;
+    margin-left: -700px;
+  }
+
+  .signup-button,
+.login-button {
+  padding: 10px 20px;
+  margin: 0 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
