@@ -169,101 +169,35 @@ app.post(`/main`, (req, res) => {
 });
 
 app.post('/transactionHistory', (req, res) => {
+    let sql = 'SELECT TR.transfer_id, TR.transfer_date, T1.team_name AS buying_team, T2.team_name AS selling_team, PL.player_name FROM Transaction TR JOIN BuyingTeam BT ON TR.transfer_id = BT.transfer_id JOIN SellingTeam ST ON TR.transfer_id = ST.transfer_id JOIN SoldPlayer SP ON TR.transfer_id = SP.transfer_id JOIN Players PL ON SP.player_id = PL.player_id JOIN Teams T1 ON T1.team_id = BT.team_id JOIN Teams T2 ON T2.team_id = ST.team_id WHERE ((T1.team_name = ? or  T2.team_name = ?) and T1.team_name != T2.team_name)'
     const team_name = req.body.team_name;
-    var team_id = "";
-    var buyingTransferIDs = [];
-    var boughtPlayerNames = [];
-    var boughtPlayerValues = [];
-    var soldPlayerNames = [];
-    var soldPlayerValues = [];
-    var dataToSend = {};
-    console.log(team_name);
-    db.query('SELECT team_id FROM Teams WHERE team_name = ?', [team_name], (err, rows) => {
+    db.query(sql, [team_name, team_name], (err, rows) => {
         if (err) {
             console.log(err);
             res.status(500).send("Internal Server Error");
-        } else {
+        }
+        else {
             if (rows.length > 0) {
-                team_id = rows[0].team_id;
-                db.query('SELECT transfer_id FROM Transaction WHERE transfer_id IN (SELECT transfer_id FROM BuyingTeam WHERE team_id = ?)', [team_id], (err, rows) => {
-                    if (err) {
-                        console.log(err);
-                        res.status(500).send("Internal Server Error");
-                    } else {
-                        if (rows.length > 0) {
-                            buyingTransferIDs = rows.map(row => row.transfer_id);
-                            console.log(buyingTransferIDs);
-                            db.query('SELECT player_name, value FROM Players WHERE player_id IN (SELECT player_id FROM SoldPlayer WHERE transfer_id IN (SELECT transfer_id FROM BuyingTeam WHERE team_id = ?));', [team_id], (err, rows) => {
-                                if (err) {
-                                    console.log(err);
-                                    res.status(500).send("Internal Server Error");
-                                } else {
-                                    if (rows.length > 0) {
-                                        console.log("PLAYER NAMES = >>>> ", rows);
-                                        boughtPlayerNames = rows.map(row => row.player_name);
-                                        boughtPlayerValues = rows.map(row => row.value);
-                                    } else {
-                                        console.log("ABE YAAR");
-                                    }
-                                }
-                            })
-                            // res.send(buyingTransferIDs);
-                        } else {
-                            // res.send("Acchahhahah");
-                            console.log("No players bought till now");
-                        }
-                    }
-                })
-                console.log(buyingTransferIDs);
-                db.query('SELECT transfer_id FROM Transaction WHERE transfer_id IN (SELECT transfer_id FROM SellingTeam WHERE team_id = ?)', [team_id], (err, rows) => {
-                    if (err) {
-                        console.log(err);
-                        res.status(500).send("Internal Server Error");
-                    } else {
-                        if (rows.length > 0) {
-                            const sellingTransferIDs = rows.map(row => row.transfer_id);
-                            console.log(sellingTransferIDs);
-                            db.query('SELECT player_name, value FROM Players WHERE player_id IN (SELECT player_id FROM SoldPlayer WHERE transfer_id IN (SELECT transfer_id FROM Transaction WHERE transfer_id IN (SELECT transfer_id FROM BuyingTeam WHERE team_id = ?)));', [team_id], (err, rows) => {
-                                if (err) {
-                                    console.log(err);
-                                    res.status(500).send("Internal Server Error");
-                                } else {
-                                    if (rows.length > 0) {
-                                        soldPlayerNames = rows.map(row => row.player_name);
-                                        soldPlayerValues = rows.map(row => row.value);
-                                        dataToSend = {
-                                            buyingTransferIDs: buyingTransferIDs,
-                                            boughtPlayerNames: boughtPlayerNames,
-                                            boughtPlayerValues: boughtPlayerValues,
-                                            sellingTransferIDs: sellingTransferIDs,
-                                            soldPlayerNames: soldPlayerNames,
-                                            soldPlayerValues: soldPlayerValues
-                                        };
-                                        console.log(dataToSend);
-                                        res.send(dataToSend);
-                                    } else {
-                                        console.log("ABE YAAR");
-                                    }
-                                }
-                            })
-                            // res.send(transferIDs);
-                        } else {
-                            dataToSend = {
-                                buyingTransferIDs: buyingTransferIDs,
-                                boughtPlayerNames: boughtPlayerNames,
-                                boughtPlayerValues: boughtPlayerValues
-                            };
-                            res.send(dataToSend);
-                        }
-                    }
-                })
-            } else {
-                console.log(team_name);
-                console.log("abe bsdk");
+                const transfer_id = rows.map(row => row.transfer_id);
+                const transfer_date = rows.map(row => row.transfer_date);
+                const buying_team = rows.map(row => row.buying_team);
+                const selling_team = rows.map(row => row.selling_team);
+                const player_name = rows.map(row => row.player_name);
+                res.send({
+                    transfer_id: transfer_id,
+                    transfer_date: transfer_date,
+                    buying_team: buying_team,
+                    selling_team: selling_team,
+                    player_name: player_name
+                });
+                console.log("transaction info sent!")
+            }
+            else {
+                res.send({ transfer_id: [] });
             }
         }
     })
-});
+})
 
 app.post('/retreivemarketplace', (req, res) => {
     const team_name = req.body.team_name;
