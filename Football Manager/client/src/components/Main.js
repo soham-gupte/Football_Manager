@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import "../styles/MainStyles.css"
 import { Menu } from './Menu';
 import axios from 'axios'; // Import Axios
+import Axios from 'axios';
 import { FaAnglesDown } from "react-icons/fa6";
 import { FaAnglesUp } from "react-icons/fa6";
 import { MdSell } from "react-icons/md";
@@ -92,9 +93,25 @@ export function Main() {
         setModalName(name);
     }
 
+    function makeRequest(playerName, toTeam) {
+        const team_name = localStorage.getItem('team_name');
+        Axios.post('http://localhost:3001/makerequest', {
+            team_name: team_name,
+            playerName: playerName,
+            toTeam: toTeam,
+        }).then((response) => {
+            console.log("SUCCESS");
+          
+          })
+          .catch((error) => {
+              console.log("Error : ", error);
+          })
+    }
+
     // For Modal pop-up
     const [show1, setShow1] = useState(false);
     const [modalName1, setModalName1] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
 
     function confirmSell(name){
         handleClose1();
@@ -148,7 +165,7 @@ export function Main() {
                         </Modal.Header>
                         <Modal.Body>
                             Please search for the club you wish to trade {modalName} with:
-                            <InputGroup className="mb-3">
+                            <InputGroup className="mb-3" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}>
                                 <InputGroup.Text id="inputGroup-sizing-default">
                                     Default
                                 </InputGroup.Text>
@@ -162,7 +179,7 @@ export function Main() {
                             <Button variant="secondary" onClick={handleClose}>
                                 Close
                             </Button>
-                            <Button variant="primary">Confirm</Button>
+                            <Button variant="primary" onClick={() => makeRequest(modalName, searchTerm)}>Confirm</Button>
                         </Modal.Footer>
                     </Modal>
 

@@ -70,9 +70,8 @@ export function Marketplace({ itemsPerPage }) {
         
         })
         .catch((error) => {
-          console.log("Error : ", error);
-          
-    });
+            console.log("Error : ", error);
+        });
 }
 
     useEffect(() => {
