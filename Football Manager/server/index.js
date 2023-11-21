@@ -7,7 +7,7 @@ app.use(cors());
 app.use(express.json());
 
 const db = mysql.createConnection({
-    user: 'root',
+    user: 'root', 
     host: 'football.cn9livtjfzqg.ap-south-1.rds.amazonaws.com',
     password: 'password',
     database: 'FootballDB'
@@ -17,22 +17,22 @@ app.post('/create', (req, res) => {
     const team_name = req.body.team_name;
     const password = req.body.password;
     const email = req.body.email;
-    // 
-    db.query('INSERT INTO Teams (team_name, password, email, budget) VALUES(?,?,?,10)',
-        [team_name, password, email],
-        (err, result) => {
-            if (err) {
-                console.log(err);
-                if (err.code === 'ER_DUP_ENTRY') {
-                    // Duplicate entry error, team_name already exists
-                    res.status(409).send({ data: "Team name already exists" });
-                } else {
-                    res.status(500).send("Internal Server Error");
-                }
+// 
+    db.query('INSERT INTO Teams (team_name, password, email, budget) VALUES(?,?,?,10)', 
+    [team_name, password, email], 
+    (err, result) => {
+        if (err) {
+            console.log(err);
+            if (err.code === 'ER_DUP_ENTRY') {
+                // Duplicate entry error, team_name already exists
+                res.status(409).send({ data: "Team name already exists" });
             } else {
-                res.send({ data: "Values Inserted" });
+                res.status(500).send("Internal Server Error");
             }
-        });
+        } else {
+            res.send({ data: "Values Inserted" });
+        }
+    });
 });
 
 app.post('/login', (req, res) => {
@@ -48,19 +48,41 @@ app.post('/login', (req, res) => {
                 const storedPassword = rows[0].password;
                 const storedTeamName = rows[0].team_name;
                 if (team_name != storedTeamName) {
-                    res.send({ data: "No user found" });
+                    res.send({data:"No user found"});
                 }
                 else if (team_name === storedTeamName) {
                     if (password === storedPassword) {
                         // Passwords match, you can consider it a successful login
-                        res.send({ data: "Login Successful" });
+                        res.send({data:"Login Successful"});
                     } else {
                         // Passwords do not match
-                        res.status(401).send({ data: "Invalid Password" });
+                        res.status(401).send({data:"Invalid Password"});
                     }
                 } else {
-                    res.status(404).send({ data: "User not found" });
+                    res.status(404).send({data:"User not found"});
                 }
+            }
+        }
+    });
+});
+
+app.post('/getTeamBudget', (req, res) => {
+    const team_name = req.body.team_name;
+    console.log(team_name)
+
+    const getTeamBudgetQuery = 'SELECT budget FROM Teams WHERE team_name = ?';
+
+    db.query(getTeamBudgetQuery, [team_name], (err, rows) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Internal Server Error');
+        } else {
+            if (rows.length > 0) {
+                const teamBudget = rows[0].budget;
+                console.log(teamBudget);
+                res.send({ teamBudget });
+            } else {
+                res.status(404).send('Team not found');
             }
         }
     });
@@ -146,107 +168,6 @@ app.post(`/main`, (req, res) => {
     res.send({ team_name: team_name });
 });
 
-// app.post('/transactionHistory', (req, res) => {
-//     const team_name = req.body.team_name;
-//     var team_id = "";
-//     var buyingTransferIDs = [];
-//     var boughtPlayerNames = [];
-//     var boughtPlayerValues = [];
-//     var soldPlayerNames = [];
-//     var soldPlayerValues = [];
-//     var dataToSend = {};
-//     console.log(team_name);
-//     db.query('SELECT team_id FROM Teams WHERE team_name = ?', [team_name], (err, rows) => {
-//         if (err) {
-//             console.log(err);
-//             res.status(500).send("Internal Server Error");
-//         } else {
-//             if (rows.length > 0) {
-//                 team_id = rows[0].team_id;
-//                 db.query('SELECT transfer_id FROM Transaction WHERE transfer_id IN (SELECT transfer_id FROM BuyingTeam WHERE team_id = ?)', [team_id], (err, rows) => {
-//                     if (err) {
-//                         console.log(err);
-//                         res.status(500).send("Internal Server Error");
-//                     } else {
-//                         if (rows.length > 0) {
-//                             buyingTransferIDs = rows.map(row => row.transfer_id);
-//                             console.log(buyingTransferIDs);
-//                             db.query('SELECT player_name, value, player_id FROM Players WHERE player_id IN (SELECT player_id FROM SoldPlayer WHERE transfer_id IN (SELECT transfer_id FROM BuyingTeam WHERE team_id = ?));', [team_id], (err, rows) => {
-//                                 if (err) {
-//                                     console.log(err);
-//                                     res.status(500).send("Internal Server Error");
-//                                 } else {
-//                                     if (rows.length > 0) {
-//                                         console.log("PLAYER NAMES = >>>> ", rows);
-//                                         boughtPlayerNames = rows.map(row => row.player_name);
-//                                         boughtPlayerValues = rows.map(row => row.value);
-//                                         boughtPlayerIDs = rows.map(row => row.player_id);
-//                                     } else {
-//                                         console.log("ABE YAAR");
-//                                     }
-//                                 }
-//                             })
-//                             // res.send(buyingTransferIDs);
-//                         } else {
-//                             // res.send("Acchahhahah");
-//                             console.log("No players bought till now");
-//                         }
-//                     }
-//                 })
-//                 console.log(buyingTransferIDs);
-//                 db.query('SELECT transfer_id FROM Transaction WHERE transfer_id IN (SELECT transfer_id FROM SellingTeam WHERE team_id = ?)', [team_id], (err, rows) => {
-//                     if (err) {
-//                         console.log(err);
-//                         res.status(500).send("Internal Server Error");
-//                     } else {
-//                         if (rows.length > 0) {
-//                             const sellingTransferIDs = rows.map(row => row.transfer_id);
-//                             console.log(sellingTransferIDs);
-//                             db.query('SELECT player_name, value, player_id FROM Players WHERE player_id IN (SELECT player_id FROM SoldPlayer WHERE transfer_id IN (SELECT transfer_id FROM Transaction WHERE transfer_id IN (SELECT transfer_id FROM SellingTeam WHERE team_id = ?)));', [team_id], (err, rows) => {
-//                                 if (err) {
-//                                     console.log(err);
-//                                     res.status(500).send("Internal Server Error");
-//                                 } else {
-//                                     if (rows.length > 0) {
-//                                         soldPlayerNames = rows.map(row => row.player_name);
-//                                         soldPlayerValues = rows.map(row => row.value);
-//                                         soldPlayerIDs = rows.map(row => row.player_id);
-//                                         dataToSend = {
-//                                             buyingTransferIDs: buyingTransferIDs,
-//                                             boughtPlayerIDs: boughtPlayerIDs,
-//                                             boughtPlayerNames: boughtPlayerNames,
-//                                             boughtPlayerValues: boughtPlayerValues,
-//                                             sellingTransferIDs: sellingTransferIDs,
-//                                             soldPlayerIDs: soldPlayerIDs,
-//                                             soldPlayerNames: soldPlayerNames,
-//                                             soldPlayerValues: soldPlayerValues
-//                                         };
-//                                         console.log(dataToSend);
-//                                         res.send(dataToSend);
-//                                     } else {
-//                                         console.log("ABE YAAR");
-//                                     }
-//                                 }
-//                             })
-//                             // res.send(transferIDs);
-//                         } else {
-//                             dataToSend = {
-//                                 buyingTransferIDs: buyingTransferIDs,
-//                                 boughtPlayerNames: boughtPlayerNames,
-//                                 boughtPlayerValues: boughtPlayerValues
-//                             };
-//                             res.send(dataToSend);
-//                         }
-//                     }
-//                 })
-//             } else {
-//                 console.log(team_name);
-//                 console.log("abe bsdk");
-//             }
-//         }
-//     })
-// });
-
 app.post('/transactionHistory', (req, res) => {
     let sql = 'SELECT TR.transfer_id, TR.transfer_date, T1.team_name AS buying_team, T2.team_name AS selling_team, PL.player_name FROM Transaction TR JOIN BuyingTeam BT ON TR.transfer_id = BT.transfer_id JOIN SellingTeam ST ON TR.transfer_id = ST.transfer_id JOIN SoldPlayer SP ON TR.transfer_id = SP.transfer_id JOIN Players PL ON SP.player_id = PL.player_id JOIN Teams T1 ON T1.team_id = BT.team_id JOIN Teams T2 ON T2.team_id = ST.team_id WHERE ((T1.team_name = ? or  T2.team_name = ?) and T1.team_name != T2.team_name)'
     const team_name = req.body.team_name;
@@ -290,7 +211,7 @@ app.post('/retreivemarketplace', (req, res) => {
 
     db.query(sql, params, (err, rows) => {
         if (err) {
-            console.log(err);
+            console.log(err);   
             res.status(500).send("Internal Server Error");
         } else {
             if (rows.length > 0) {
@@ -299,12 +220,10 @@ app.post('/retreivemarketplace', (req, res) => {
                 const nationality = rows.map(row => row.nationality);
                 const value = rows.map(row => row.value);
 
-                res.send({
-                    player_name: playerNames,
-                    position: position,
-                    nationality: nationality,
-                    value: value
-                });
+                res.send({ player_name: playerNames, 
+                        position: position, 
+                        nationality: nationality,
+                        value: value });
                 console.log("player info sent")
             } else {
                 res.send({ playerNames: [] });
@@ -320,7 +239,7 @@ app.post('/marketplace', (req, res) => {
 // app.post('/listOnMarketplace', (req, res) => {
 //     const player_name = req.body.player_name;
 //     const team_name = req.body.team_name;
-
+  
 //     // Retrieve player_id and team_id corresponding to player_name and team_name
 //     const getPlayerTeamIdsQuery = `
 //     SELECT Squad.player_id, Squad.team_id
@@ -329,7 +248,7 @@ app.post('/marketplace', (req, res) => {
 //     JOIN Teams ON Squad.team_id = Teams.team_id
 //     WHERE Players.player_name = ? AND Teams.team_name = ?
 //     `;
-
+    
 //     db.query(getPlayerTeamIdsQuery, [player_name, team_name], (err, rows) => {
 //       if (err) {
 //         console.error(err);
@@ -338,10 +257,10 @@ app.post('/marketplace', (req, res) => {
 //         if (rows.length > 0) {
 //           const player_id = rows[0].player_id;
 //           const team_id = rows[0].team_id;
-
+  
 //           // Insert into the Marketplace table
 //           const insertIntoMarketplaceQuery = 'INSERT INTO Marketplace (player_id, team_id) VALUES (?, ?)';
-
+  
 //           db.query(insertIntoMarketplaceQuery, [player_id, team_id], (err) => {
 //             if (err) {
 //               console.error(err);
@@ -360,7 +279,7 @@ app.post('/marketplace', (req, res) => {
 app.post('/listOnMarketplace', (req, res) => {
     const player_name = req.body.player_name;
     const team_name = req.body.team_name;
-
+  
     // Retrieve player_id and team_id corresponding to player_name and team_name
     const getPlayerTeamIdsQuery = `
       SELECT Squad.player_id, Squad.team_id
@@ -369,59 +288,59 @@ app.post('/listOnMarketplace', (req, res) => {
       JOIN Teams ON Squad.team_id = Teams.team_id
       WHERE Players.player_name = ? AND Teams.team_name = ?
     `;
-
+  
     db.query(getPlayerTeamIdsQuery, [player_name, team_name], (err, rows) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Internal Server Error');
-        } else {
-            if (rows.length > 0) {
-                const player_id = rows[0].player_id;
-                const team_id = rows[0].team_id;
-
-                // Check if the player is already in the Marketplace
-                const checkPlayerInMarketplaceQuery = 'SELECT * FROM Marketplace WHERE player_id = ? AND team_id = ?';
-
-                db.query(checkPlayerInMarketplaceQuery, [player_id, team_id], (err, marketplaceRows) => {
-                    if (err) {
-                        console.error(err);
-                        res.status(500).send('Internal Server Error');
-                    } else {
-                        if (marketplaceRows.length === 0) {
-                            // Player is not in the Marketplace, insert into the Marketplace table
-                            const insertIntoMarketplaceQuery = 'INSERT INTO Marketplace (player_id, team_id) VALUES (?, ?)';
-
-                            db.query(insertIntoMarketplaceQuery, [player_id, team_id], (err) => {
-                                if (err) {
-                                    console.error(err);
-                                    if (err.code === 'ER_DUP_ENTRY') {
-                                        db.query('UPDATE Marketplace SET team_id = ? WHERE (player_id = ?)', [team_id, player_id], (err, rows) => {
-                                            if (err) {
-                                                console.error(err);
-                                                res.status(500).send('Internal Server Error');
-                                            } else {
-                                                console.log("WAY around");
-                                            }
-                                        })
-                                    }
-                                    // res.status(500).send('Internal Server Error');
-                                } else {
-                                    res.send('Player listed on Marketplace successfully');
-                                }
-                            });
-                        } else {
-                            // Player is already in the Marketplace
-                            res.status(409).send('Player is already listed on the Marketplace');
-                        }
-                    }
-                });
+      if (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+      } else {
+        if (rows.length > 0) {
+          const player_id = rows[0].player_id;
+          const team_id = rows[0].team_id;
+  
+          // Check if the player is already in the Marketplace
+          const checkPlayerInMarketplaceQuery = 'SELECT * FROM Marketplace WHERE player_id = ? AND team_id = ?';
+  
+          db.query(checkPlayerInMarketplaceQuery, [player_id, team_id], (err, marketplaceRows) => {
+            if (err) {
+              console.error(err);
+              res.status(500).send('Internal Server Error');
             } else {
-                res.status(404).send('Player not found in the specified team');
+              if (marketplaceRows.length === 0) {
+                // Player is not in the Marketplace, insert into the Marketplace table
+                const insertIntoMarketplaceQuery = 'INSERT INTO Marketplace (player_id, team_id) VALUES (?, ?)';
+  
+                db.query(insertIntoMarketplaceQuery, [player_id, team_id], (err) => {
+                  if (err) {
+                    console.error(err);
+                    if (err.code === 'ER_DUP_ENTRY') {
+                    db.query('UPDATE Marketplace SET team_id = ? WHERE (player_id = ?)', [team_id, player_id], (err, rows) => {
+                        if (err) {
+                            console.error(err);
+                            res.status(500).send('Internal Server Error');
+                        } else {
+                            console.log("WAY around");
+                        }
+                    })
+                    }
+                    // res.status(500).send('Internal Server Error');
+                  } else {
+                    res.send('Player listed on Marketplace successfully');
+                  }
+                });
+              } else {
+                // Player is already in the Marketplace
+                res.status(409).send('Player is already listed on the Marketplace');
+              }
             }
+          });
+        } else {
+          res.status(404).send('Player not found in the specified team');
         }
+      }
     });
-});
-
+  });
+  
 
 function givedate() {
     showdate = new Date();
@@ -506,7 +425,7 @@ app.post('/buyplayer', (req, res) => {
                                                                                                         console.log(err);
                                                                                                         res.status(503).send("Internal Server Error");
                                                                                                     } else {
-                                                                                                        db.query('UPDATE Squad SET team_id = ? WHERE (team_id = ?) and (player_id = ?)', [fromTeam, team_id, player_id], (err, rows) => {
+                                                                                                        db.query('UPDATE Squad SET team_id = ? WHERE (team_id = ?) and (player_id = ?)', [team_id, fromTeam, player_id], (err, rows) => {
                                                                                                             if (err) {
                                                                                                                 console.log(err);
                                                                                                                 res.status(504).send("Internal Server Error");
@@ -548,7 +467,7 @@ app.post('/buyplayer', (req, res) => {
                                                                                                         })
                                                                                                     }
                                                                                                 })
-
+                                                                                                
                                                                                                 console.log("Transaction successful (without from team)!");
                                                                                             }
                                                                                         }

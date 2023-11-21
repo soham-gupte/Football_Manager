@@ -22,7 +22,7 @@ export function Main() {
 
     };
 
-    const handleSwap = (indexB) => {
+    const handleSwap = (indexB, team_name) => {
         if (selectedElementA !== null) {
             // Create copies of the arrays
             const newArrayA = [...playing11Array];
@@ -37,6 +37,13 @@ export function Main() {
             setPlaying11Array(newArrayA);
             setSubstitutesArray(newArrayB);
             setSelectedElementA(null);
+            console.log("player1 swapped: ",newArrayA[selectedElementA].name);
+            console.log("player2 swapped: ",temp.name);
+            axios.post('http://localhost:3001/handleSwap', { 
+                team_name: team_name, 
+                player1: temp.name,
+                player2: (newArrayA[selectedElementA].name),
+        })
         }
     };
 
@@ -89,7 +96,18 @@ export function Main() {
     const [show1, setShow1] = useState(false);
     const [modalName1, setModalName1] = useState('');
 
+    function confirmSell(name){
+        handleClose1();
+        console.log("selling ", name)
+        axios.post('http://localhost:3001/listOnMarketplace', { 
+            player_name: name,
+            team_name : localStorage.getItem('team_name'),
+        })
+    }
+
     const handleClose1 = () => setShow1(false);
+
+    //to list a player in the marketplace
     const handleShow1 = (name) => {
         setShow1(true);
         setModalName1(name);
@@ -165,7 +183,7 @@ export function Main() {
                             <Button variant="secondary" onClick={handleClose1}>
                                 NO
                             </Button>
-                            <Button variant="primary" onClick={handleClose1}>YES</Button>
+                            <Button variant="primary" onClick={() => confirmSell(modalName1)}>YES</Button>
                         </Modal.Footer>
                     </Modal>
                 </div>
@@ -178,7 +196,7 @@ export function Main() {
                                     <h2 className="player-card-title">{item.name}</h2>
                                 </div>
 
-                                <Button className="subs-btn" variant="primary" onClick={() => handleSwap(index)}><FaAnglesUp /></Button>
+                                <Button className="subs-btn" variant="primary" onClick={() => handleSwap(index, localStorage.getItem('team_name'))}><FaAnglesUp /></Button>
                                 <Button className="subs-btn" variant="primary" onClick={() => handleShow1(item.name)}>Sell <MdSell /></Button>
                                 <Button className="subs-btn" variant="primary" onClick={() => handleShow(item.name)}>Trade <GiTrade /></Button>
                             </div>
