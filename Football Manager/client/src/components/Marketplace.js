@@ -2,6 +2,7 @@ import Axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import { BrowserRouter, Router } from 'react-router-dom';
+import { IoCloudDownload } from "react-icons/io5";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Button, Modal, Input } from 'react-bootstrap';
@@ -20,9 +21,7 @@ function Items({ currentItems, handleEditClick }) {
               <td>{item.nationality}</td>
               <td>{item.value}</td>
               <td>
-                <a href="#" className="view" title="View" data-toggle="tooltip" style={{ color: "#10ab80" }}><i className="material-icons">&#xE417;</i></a>
-                <a href="#" className="edit" title="Edit" data-toggle="tooltip" onClick={() => handleEditClick(item.player_name)}><i className="material-icons">&#xE254;</i></a>
-                <a href="#" className="delete" title="Delete" data-toggle="tooltip" style={{ color: "red" }}><i className="material-icons">&#xE872;</i></a>
+                <a href="#" className="edit" title="Edit" data-toggle="tooltip" onClick={() => handleEditClick(item.player_name)}><IoCloudDownload /></a>
               </td>
             </tr>
           ))}
