@@ -8,6 +8,7 @@ import { Marketplace } from './components/Marketplace';
 import { Menu } from './components/Menu';
 import { Trading } from './components/Trading';
 import { Transaction } from './components/Transaction';
+import { Notifications } from './components/Notifications';
 // import Axios from 'axios'
 
 function App() {
@@ -44,6 +45,10 @@ function App() {
 
           <Route path="/transaction" element={
             <Transaction />
+          } />
+
+          <Route path="/notifications" element={
+            <Notifications />
           } />
 
         </Routes>
